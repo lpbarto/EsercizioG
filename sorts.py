@@ -1,3 +1,4 @@
+import numpy as np
 
 def merge(A, p, q, r):
     n = q - p + 1
@@ -59,23 +60,52 @@ def quicksort(A, p, r):
         quicksort(A, q + 1, r)
 
 def parent(i):
-    return i // 2
+    return (i + 1) // 2
 def left(i):
-    return 2 * i
-def right(i):
     return 2 * i + 1
+def right(i):
+    return 2 * i + 2
 
 def maxHeapify(A, i):
     l = left(i)
     r = right(i)
-    if l <= A.size() and A[l] > A[i]:
+    if l < A.heapLength and A[l] > A[i]:
         largest = l
     else:
         largest = i
-    if r <= A.size() and A[r] > A[largest]:
+    if r < A.heapLength and A[r] > A[largest]:
         largest = r
     if largest != i:
         swap(A, i, largest)
         maxHeapify(A, largest)
 
 def buildMaxHeap(A):
+    A.heapLength = len(A)
+    for i in range((len(A) - 1) // 2, - 1, - 1):
+        maxHeapify(A, i)
+
+def heapsort(A):
+    buildMaxHeap(A)
+    for i in range(A.heapLength - 1, 0, -1):
+        swap(A, 0, i)
+        A.heapLength = A.heapLength - 1
+        maxHeapify(A, 0)
+
+class heapArray(np.ndarray):
+
+    def __new__(cls, input_array, heapLength=None):
+        # Input array is an already formed ndarray instance
+        # We first cast to be our class type
+        obj = np.asarray(input_array).view(cls)
+        # add the new attribute to the created instance
+        obj.heapLength = heapLength
+        # Finally, we must return the newly created object:
+        return obj
+
+    def __array_finalize__(self, obj):
+        # see InfoArray.__array_finalize__ for comments
+        if obj is None: return
+        self.heapLength = getattr(obj, 'info', None)
+
+
+
