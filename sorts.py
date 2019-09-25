@@ -39,9 +39,7 @@ def mergesort(A, p, r):
         merge(A, p, q, r)
 
 def swap(A, a, b):
-    temp = A[a]
-    A[a] = A[b]
-    A[b] = temp
+    A[a], A[b] = A[b], A[a]
 
 def partition(A, p, r):
     x = A[r]
